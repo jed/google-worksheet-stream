@@ -1,0 +1,19 @@
+{
+  "name": "google-worksheet-stream",
+  "version": "1.0.0",
+  "description": "A streaming interface for Google Spreadsheets",
+  "scripts": {
+    "build": "babel google-worksheet-stream.js > index.js",
+    "test": "babel-node test.js",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "JSONStream": "^0.10.0"
+  },
+  "devDependencies": {
+    "async": "^0.9.0",
+    "babel": "^4.7.8",
+    "concat-stream": "^1.4.7",
+    "google-oauth-jwt-stream": "^1.0.1"
+  }
+}
