@@ -1,6 +1,8 @@
 google-worksheet-stream
 =======================
 
+[![Build Status](https://travis-ci.org/jed/google-worksheet-stream.svg)](https://travis-ci.org/jed/google-worksheet-stream)
+
 A streaming interface for [Google Spreadsheets][].
 
 Installation
