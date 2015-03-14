@@ -3,7 +3,7 @@ google-worksheet-stream
 
 [![Build Status](https://travis-ci.org/jed/google-worksheet-stream.svg)](https://travis-ci.org/jed/google-worksheet-stream)
 
-A streaming interface for [Google Spreadsheets][].
+A streaming interface for [Google Spreadsheets][] that allows you to batch write and read worksheet cells.
 
 Installation
 ------------
@@ -15,7 +15,7 @@ API
 
 #### let worksheet = new Worksheet({token, spreadsheetId, worksheetId})
 
-Returns a worksheet object with property for each of the three levels of abstraction: `cells`, `rows`, and `objects`.
+Returns a worksheet object with a property for each of the three levels of abstraction: `cells`, `rows`, and `objects`.
 
 This constructor takes three arguments:
 
