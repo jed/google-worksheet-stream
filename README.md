@@ -68,7 +68,10 @@ Returns a writable object stream of the rows in the worksheet, with the same spe
 
 #### let rs = worksheet.objects.createReadStream(options)
 
-Returns a readable object stream of the objects in the worksheet. This is an abstraction on top of the `rows` interface, in which column numbers are replaced with attribute names obtained from the first row (the "header" row).
+Returns a readable object stream of the objects in the worksheet. This is an abstraction on top of the `rows` interface, in which column numbers are replaced with attribute names obtained from the first row (the "header" row). Each row emitted has two properties:
+
+- `key`: a number identifying the row
+- `value`: an object with column names as keys and cells as values.
 
 The `options` object is not required, and can take the following properties:
 
