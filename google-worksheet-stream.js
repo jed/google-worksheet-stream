@@ -144,7 +144,7 @@ class Rows {
   }
 
   createReadStream(options) {
-    let {min: minRow, max: maxRow} = options || {}
+    let {minRow, maxRow} = options || {}
     let thisRow
 
     let rs = this.cells.createReadStream({minRow, maxRow})
@@ -209,7 +209,7 @@ class Objects {
     if (this.header) setImmediate(cb, null, this.header)
 
     else this.rows
-      .createReadStream({max: 1})
+      .createReadStream({maxRow: 1})
       .once("data", data => {
         this.header = Object
           .keys(data.value)
@@ -223,12 +223,12 @@ class Objects {
   }
 
   createReadStream(options) {
-    let {min, max} = options || {}
+    let {minRow, maxRow} = options || {}
     let self = this
 
-    min = Math.max(min || 0, 2)
+    minRow = Math.max(minRow || 0, 2)
 
-    let rs = this.rows.createReadStream({min, max})
+    let rs = this.rows.createReadStream({minRow, maxRow})
     let transform = new Transform({
       objectMode: true,
       transform(data, enc, cb) {

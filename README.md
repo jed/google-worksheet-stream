@@ -54,8 +54,8 @@ Returns a readable object stream of the rows in the worksheet. This is an abstra
 
 The `options` object is not required, and can take the following properties:
 
-- `min`: corresponds to `minRow` in the cell API
-- `max`: corresponds to `maxRow` in the cell API
+- `minRow`: corresponds to `minRow` in the cell API
+- `maxRow`: corresponds to `maxRow` in the cell API
 
 #### let ws = worksheet.rows.createWriteStream()
 
@@ -75,8 +75,8 @@ Returns a readable object stream of the objects in the worksheet. This is an abs
 
 The `options` object is not required, and can take the following properties:
 
-- `min`: corresponds to `minRow` in the cell API, but starting at 2, since row 1 is used as the header row.
-- `max`: corresponds to `maxRow` in the cell API
+- `minRow`: corresponds to `minRow` in the cell API, but starting at 2, since row 1 is used as the header row.
+- `maxRow`: corresponds to `maxRow` in the cell API
 
 #### let ws = worksheet.objects.createWriteStream()
 
