@@ -57,7 +57,7 @@ class Cells{
     parser.pipe(formatter)
 
     worksheet.token.get((err, token) => {
-      if (err) return output.emit("error", err)
+      if (err) return formatter.emit("error", err)
 
       let {token_type, access_token} = token
       headers.Authorization = `${token_type} ${access_token}`
