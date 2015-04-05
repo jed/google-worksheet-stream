@@ -1,6 +1,6 @@
 {
   "name": "google-worksheet-stream",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A streaming interface for Google Spreadsheets",
   "scripts": {
     "build": "babel google-worksheet-stream.js > index.js",
