@@ -6,8 +6,15 @@ import async from "async"
 import {Token} from "google-oauth-jwt-stream"
 import Worksheet from "./google-worksheet-stream"
 
-let email = "91515745676-4gfajos94ps431fm229noqp5rg6hc4og@developer.gserviceaccount.com"
-let key = Buffer(process.env.GOOGLE_OAUTH_KEY, "base64") || fs.readFileSync("./key.pem")
+let key = Buffer(
+  process.env.GOOGLE_OAUTH_KEY ||
+  fs.readFileSync("./key.pem.base64", "utf8")
+, "base64")
+
+let email =
+  process.env.GOOGLE_OAUTH_EMAIL ||
+  fs.readFileSync("./email.txt", "utf8").trim()
+
 let scopes = ["https://spreadsheets.google.com/feeds"]
 
 let token = new Token(email, key, scopes)
