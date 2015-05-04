@@ -39,20 +39,19 @@ class Cells{
     let options = {host: worksheet.host, headers, path}
 
     let parser = JSONStream.parse("feed.entry.*.gs$cell")
-    let formatter = new Transform({
-      objectMode: true,
-      transform(data, enc, cb) {
-        let {row, col, inputValue, numericValue} = data
+    let formatter = new Transform({objectMode: true})
 
-        let key = [row, col].map(Number)
-        let value = numericValue
-          ? parseFloat(numericValue, 10)
-          : inputValue
+    formatter._transform = function(data, enc, cb) {
+      let {row, col, inputValue, numericValue} = data
 
-        this.push({key, value})
-        cb()
-      }
-    })
+      let key = [row, col].map(Number)
+      let value = numericValue
+        ? parseFloat(numericValue, 10)
+        : inputValue
+
+      this.push({key, value})
+      cb()
+    }
 
     parser.pipe(formatter)
 
@@ -87,27 +86,25 @@ class Cells{
     let path = format({pathname: `${worksheet.path}/batch`})
     let options = {method: "POST", host: worksheet.host, headers, path}
 
-    let formatter = new Transform({
-      objectMode: true,
+    let formatter = new Transform({objectMode: true})
 
-      transform(data, enc, cb) {
-        let {key: [row, col], value} = data
-        if (value == null) value = ""
+    formatter._transform = function(data, enc, cb) {
+      let {key: [row, col], value} = data
+      if (value == null) value = ""
 
-        let entry =
-          `<batch:operation type="update"/>` +
-          `<id>https://${worksheet.host}${worksheet.path}/R${row}C${col}</id>` +
-          `<gs:cell row="${row}" col="${col}" inputValue="${value}"/>`
+      let entry =
+        `<batch:operation type="update"/>` +
+        `<id>https://${worksheet.host}${worksheet.path}/R${row}C${col}</id>` +
+        `<gs:cell row="${row}" col="${col}" inputValue="${value}"/>`
 
-        this.push(`<entry>${entry}</entry>`)
-        cb()
-      },
+      this.push(`<entry>${entry}</entry>`)
+      cb()
+    }
 
-      flush(cb) {
-        this.push(`</feed>`)
-        cb()
-      }
-    })
+    formatter._flush = function(cb) {
+      this.push(`</feed>`)
+      cb()
+    }
 
     this.worksheet.token.get((err, token) => {
       if (err) return input.emit("error", err)
@@ -148,50 +145,47 @@ class Rows {
     let thisRow
 
     let rs = this.cells.createReadStream({minRow, maxRow})
-    let transform = new Transform({
-      objectMode: true,
+    let transform = new Transform({objectMode: true})
 
-      transform(data, enc, cb) {
-        let {key: [row, col], value} = data
+    transform._transform = function(data, enc, cb) {
+      let {key: [row, col], value} = data
 
-        if (!thisRow) thisRow = {key: row, value: {}}
+      if (!thisRow) thisRow = {key: row, value: {}}
 
-        if (thisRow.key === row) {
-          thisRow.value[col] = value
-          return cb()
-        }
-
-        this._flush(err => {
-          err ? cb(err) : this._transform(data, enc, cb)
-        })
-      },
-
-      flush(cb) {
-        if (thisRow) this.push(thisRow)
-        thisRow = null
-        cb()
+      if (thisRow.key === row) {
+        thisRow.value[col] = value
+        return cb()
       }
-    })
+
+      this._flush(err => {
+        err ? cb(err) : this._transform(data, enc, cb)
+      })
+    },
+
+    transform._flush = function(cb) {
+      if (thisRow) this.push(thisRow)
+      thisRow = null
+      cb()
+    }
 
     return rs.pipe(transform)
   }
 
   createWriteStream() {
     let ws = this.cells.createWriteStream()
-    let transform = new Transform({
-      objectMode: true,
-      transform(data, enc, cb) {
-        let {key, value} = data
-        let offset = Number(Array.isArray(value))
+    let transform = new Transform({objectMode: true})
 
-        for (let col in value) this.push({
-          key: [key, Number(col) + offset],
-          value: value[col]
-        })
+    transform._transform = function(data, enc, cb) {
+      let {key, value} = data
+      let offset = Number(Array.isArray(value))
 
-        cb()
-      }
-    })
+      for (let col in value) this.push({
+        key: [key, Number(col) + offset],
+        value: value[col]
+      })
+
+      cb()
+    }
 
     transform.pipe(ws)
 
@@ -229,25 +223,24 @@ class Objects {
     minRow = Math.max(minRow || 0, 2)
 
     let rs = this.rows.createReadStream({minRow, maxRow})
-    let transform = new Transform({
-      objectMode: true,
-      transform(data, enc, cb) {
-        self.getHeader((err, header) => {
-          if (err) return cb(err)
+    let transform = new Transform({objectMode: true})
 
-          let value = {}
+    transform._transform = function(data, enc, cb) {
+      self.getHeader((err, header) => {
+        if (err) return cb(err)
 
-          for (let {name, col} of header) {
-            if (col in data.value) {
-              value[name] = data.value[col]
-            }
+        let value = {}
+
+        for (let {name, col} of header) {
+          if (col in data.value) {
+            value[name] = data.value[col]
           }
+        }
 
-          this.push({key: data.key, value})
-          cb()
-        })
-      }
-    })
+        this.push({key: data.key, value})
+        cb()
+      })
+    }
 
     return rs.pipe(transform)
   }
@@ -255,23 +248,22 @@ class Objects {
   createWriteStream() {
     let self = this
     let ws = this.rows.createWriteStream()
-    let transform = new Transform({
-      objectMode: true,
-      transform(data, enc, cb) {
-        self.getHeader((err, header) => {
-          if (err) return cb(err)
+    let transform = new Transform({objectMode: true})
 
-          let value = {}
+    transform._transform = function(data, enc, cb) {
+      self.getHeader((err, header) => {
+        if (err) return cb(err)
 
-          for (let {name, col} of header) {
-            value[col] = data.value[name]
-          }
+        let value = {}
 
-          this.push({key: data.key, value})
-          cb()
-        })
-      }
-    })
+        for (let {name, col} of header) {
+          value[col] = data.value[name]
+        }
+
+        this.push({key: data.key, value})
+        cb()
+      })
+    }
 
     transform.pipe(ws)
 
