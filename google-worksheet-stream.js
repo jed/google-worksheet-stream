@@ -231,7 +231,9 @@ class Objects {
 
         let value = {}
 
-        for (let {name, col} of header) {
+        for (let key in header) {
+          let {name, col} = header[key]
+
           if (col in data.value) {
             value[name] = data.value[col]
           }
@@ -256,7 +258,9 @@ class Objects {
 
         let value = {}
 
-        for (let {name, col} of header) {
+        for (let key in header) {
+          let {name, col} = header[key]
+
           value[col] = data.value[name]
         }
 
