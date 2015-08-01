@@ -36,7 +36,7 @@ class Cells{
 
     let {worksheet} = this
     let path = format({pathname: worksheet.path, query})
-    let options = {host: worksheet.host, headers, path}
+    options = {host: worksheet.host, headers, path}
 
     let parser = JSONStream.parse("feed.entry.*.gs$cell")
     let formatter = new Transform({objectMode: true})
@@ -84,7 +84,7 @@ class Cells{
 
     let {worksheet} = this
     let path = format({pathname: `${worksheet.path}/batch`})
-    let options = {method: "POST", host: worksheet.host, headers, path}
+    options = {method: "POST", host: worksheet.host, headers, path}
 
     let formatter = new Transform({objectMode: true})
 
@@ -107,7 +107,7 @@ class Cells{
     }
 
     this.worksheet.token.get((err, token) => {
-      if (err) return input.emit("error", err)
+      if (err) return formatter.emit("error", err)
 
       let {token_type, access_token} = token
       headers.Authorization = `${token_type} ${access_token}`
