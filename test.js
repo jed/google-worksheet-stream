@@ -1,6 +1,6 @@
 import fs from "fs"
 import {deepEqual} from "assert"
-import {Transform} from "stream"
+import {Transform} from "readable-stream"
 import concat from "concat-stream"
 import async from "async"
 import {Token} from "google-oauth-jwt-stream"
