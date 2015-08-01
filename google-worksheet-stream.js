@@ -1,5 +1,5 @@
 import {get, request} from "https"
-import {Transform} from "stream"
+import {Transform} from "readable-stream"
 import {format} from "url"
 import JSONStream from "JSONStream"
 

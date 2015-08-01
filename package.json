@@ -8,7 +8,8 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "JSONStream": "^0.10.0"
+    "JSONStream": "^0.10.0",
+    "readable-stream": "^2.0.2"
   },
   "devDependencies": {
     "async": "^0.9.0",
